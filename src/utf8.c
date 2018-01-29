@@ -16,15 +16,15 @@ from_utf8_to_utf16le(int infile, int outfile){
 
   bom = UTF16LE;
   #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-  reverse_bytes(&bom, 2);
+    reverse_bytes(&bom, 2);
   #endif
   write_to_bigendian(outfile, &bom, 2);
 
   while((bytes_read = read_to_bigendian(infile, &utf8_buf.bytes[0], 1)) > 0) {
     if((remaining_bytes = remaining_utf8_bytes(utf8_buf.bytes[0]))) {
-      if((bytes_read = read_to_bigendian(infile, &utf8_buf.bytes[1], remaining_bytes)) < 0) {
-        break;
-      }
+        if((bytes_read = read_to_bigendian(infile, &utf8_buf.bytes[1], remaining_bytes)) < 0) {
+            break;
+        }
     }
     code_point = (code_point_t)(unsigned long)get_utf8_decoding_function(remaining_bytes + 1,utf8_buf);
     utf16_buf = code_point_to_utf16le_glyph(code_point, &size_of_glyph);
@@ -35,8 +35,7 @@ from_utf8_to_utf16le(int infile, int outfile){
 }
 
 int
-from_utf8_to_utf16be(int infile, int outfile)
-{
+from_utf8_to_utf16be(int infile, int outfile){
   int ret = 0;
   int bom;
   utf8_glyph_t utf8_buf;
@@ -54,9 +53,9 @@ from_utf8_to_utf16be(int infile, int outfile)
 
   while((bytes_read = read_to_bigendian(infile, &utf8_buf.bytes[0], 1)) > 0) {
     if((remaining_bytes = remaining_utf8_bytes(utf8_buf.bytes[0]))) {
-      if((bytes_read = read_to_bigendian(infile, &utf8_buf.bytes[1], remaining_bytes)) < 0) {
-        break;
-      }
+        if((bytes_read = read_to_bigendian(infile, &utf8_buf.bytes[1], remaining_bytes)) < 0) {
+            break;
+        }
     }
     code_point = (code_point_t)(unsigned long)get_utf8_decoding_function(remaining_bytes + 1,utf8_buf);
     utf16_buf = code_point_to_utf16be_glyph(code_point, &size_of_glyph);
@@ -68,13 +67,12 @@ from_utf8_to_utf16be(int infile, int outfile)
 
 utf8_glyph_t
 code_point_to_utf8_glyph(code_point_t code_point, size_t *size_of_glyph){
-  *size_of_glyph = utf8_glyph_size_of_code_point(code_point);
-  return get_utf8_encoding_function(*size_of_glyph)(code_point);
+    *size_of_glyph = utf8_glyph_size_of_code_point(code_point);
+    return get_utf8_encoding_function(*size_of_glyph)(code_point);
 }
 
 size_t
 utf8_glyph_size_of_code_point(code_point_t code_point){
-
     if(code_point <= 0x7F) {
     return 1;
     }
@@ -127,7 +125,6 @@ utf8_two_byte_encode(code_point_t code_point){
 
 utf8_glyph_t
 utf8_three_byte_encode(code_point_t code_point){
-    
     utf8_glyph_t ret;
     uint8_t buf;
     size_t i;
@@ -183,8 +180,7 @@ remaining_utf8_bytes(utf8_byte_t first_byte){
 
  utf8_decoding_func_t
  get_utf8_decoding_function(size_t size,utf8_glyph_t glyph){
-    
-    switch(size) {
+     switch(size) {
         case 1:
             return (utf8_decoding_func_t)(long)utf8_one_byte_decode(glyph);
         case 2:
@@ -199,7 +195,6 @@ remaining_utf8_bytes(utf8_byte_t first_byte){
 
 code_point_t
 utf8_one_byte_decode(utf8_glyph_t glyph){
-    
     code_point_t ret;
     ret = glyph.bytes[0].byte;
     return ret;

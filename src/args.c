@@ -25,96 +25,93 @@ parse_args(int argc, char *argv[]){
         USAGE(argv[0]);
         exit(EXIT_FAILURE);
     }
+    
     if(argc>5){
         USAGE(argv[0]);
         exit(EXIT_FAILURE);
     }
-
-
+    
     joined_argv = join_string_array(argc, arguments);
     info("argc: %d argv: %s", argc, joined_argv);
-
     program_state = Calloc(1, sizeof(state_t));
+    
     for (i = 0; iterator < argc; ++i) {
         debug("%d opterr: %d", i, opterr);
         debug("%d optind: %d", i, optind);
         debug("%d optopt: %d", i, optopt);
         debug("%d argv[optind]: %s", i, argv[optind]);
         if ((option = getopt(argc, argv, "h+e:")) != -1) {
-          switch (option) {
-            case 'e':
-              if((strcmp(optarg,"-h"))==0){
-                USAGE(argv[0]);
-                free(program_state);
-                exit(EXIT_SUCCESS);
-              }
-              info("Encoding Argument: %s", optarg);
-              if ((program_state->encoding_to = determine_format(optarg)) == 0){
-                print_state();  //errorcase;
-              }
+            switch (option) {
+                case 'e':
+                    if((strcmp(optarg,"-h"))==0){
+                        USAGE(argv[0]);
+                        free(program_state);
+                        exit(EXIT_SUCCESS);
+                    }
+                    info("Encoding Argument: %s", optarg);
+                    if ((program_state->encoding_to = determine_format(optarg)) == 0){
+                        print_state();  //errorcase;
+                    }
 
-              if((argc - (optind)) == 2){
-                program_state->in_file = argv[optind];
-                program_state->out_file = argv[optind + 1];
-              }
-              else if((argc - (optind)) == 1){
-                program_state->in_file = argv[optind - 3];
-                program_state->out_file = argv[optind];
-              }
-              else if((argc - (optind)) == 0){
-                program_state->in_file = argv[optind - 4];
-                program_state->out_file = argv[optind - 3];
-              }
-              break;
+                    if((argc - (optind)) == 2){
+                        program_state->in_file = argv[optind];
+                        program_state->out_file = argv[optind + 1];
+                    }
+                    else if((argc - (optind)) == 1){
+                        program_state->in_file = argv[optind - 3];
+                        program_state->out_file = argv[optind];
+                    }
+                    else if((argc - (optind)) == 0){
+                        program_state->in_file = argv[optind - 4];
+                        program_state->out_file = argv[optind - 3];
+                    }
+                    break;
 
-            case '?':
-              if (optopt != 'h'){
-                USAGE(argv[0]);
-                fprintf(stderr, KRED "-%c is not a supported argument\n" KNRM,optopt);
-                free(joined_argv);
+                case '?':
+                    if (optopt != 'h'){
+                        USAGE(argv[0]);
+                        fprintf(stderr, KRED "-%c is not a supported argument\n" KNRM,optopt);
+                        free(joined_argv);
+                        free(program_state);
+                        exit(EXIT_FAILURE);
+                    }
+                    else{
+                        USAGE(argv[0]);
+                        free(joined_argv);
+                        free(program_state);
+                        exit(EXIT_SUCCESS);
+                    }
+                    break;
 
-                free(program_state);
-                exit(EXIT_FAILURE);
-              }
-              else{
-                USAGE(argv[0]);
-                free(joined_argv);
+                case 'h':    //"errorcase"[0]
+                    USAGE(argv[0]);
+                    free(joined_argv);
+                    free(program_state);
+                    exit(EXIT_SUCCESS);
+                    break;
 
-                free(program_state);
-                exit(EXIT_SUCCESS);
-              }
-              break;
-
-            case 'h':    //"errorcase"[0]
-              USAGE(argv[0]);
-              free(joined_argv);
-              free(program_state);
-              exit(EXIT_SUCCESS);
-              break;
-
-            default: {
-              break;
+                default: {
+                    break;
+                }
             }
-          }
+        }
+        iterator++;
     }
-    iterator++;
-  }
-    free(joined_argv);
+        free(joined_argv);
 }
 
 format_t
 determine_format(char *argument){
-  
   STR_UTF16BE = "UTF16BE";
   STR_UTF16LE = "UTF16LE";
   STR_UTF8 = "UTF8";
 
   if (strcmp(argument, STR_UTF16LE) == 0)
-    return UTF16LE;
+      return UTF16LE;
   if (strcmp(argument, STR_UTF16BE) == 0)
-    return UTF16BE;
+      return UTF16BE;
   if (strcmp(argument, STR_UTF8) == 0)
-    return UTF8;
+      return UTF8;
   return 0;
 }
 
@@ -122,9 +119,9 @@ const char*
 bom_to_string(format_t bom){
 
   switch(bom){
-    case UTF8: return STR_UTF8;
-    case UTF16BE: return STR_UTF16BE;
-    case UTF16LE: return STR_UTF16LE;
+      case UTF8: return STR_UTF8;
+      case UTF16BE: return STR_UTF16BE;
+      case UTF16LE: return STR_UTF16LE;
   }
   return "UNKNOWN";
 }
@@ -156,8 +153,8 @@ array_size(int count, char *array[]){
     
   int i, sum = 1; /* NULL terminator */
   for (i = 0; i < count; ++i) {
-    sum += strlen(array[i]);
-    ++sum; /* For the spaces */
+      sum += strlen(array[i]);
+      ++sum; /* For the spaces */
   }
   return sum+1;
 }
@@ -166,8 +163,8 @@ void
 print_state(){
     
   if (program_state == NULL) {
-    error("program_state is %p", (void*)program_state);
-    exit(EXIT_FAILURE);
+      error("program_state is %p", (void*)program_state);
+      exit(EXIT_FAILURE);
   }
   info("program_state {\n"
          "  format_t encoding_to = 0x%X;\n"

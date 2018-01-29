@@ -16,17 +16,17 @@ get_encoding_function(int infile,int outfile){
     switch (translate) {
         case utf8_to_utf16le:
             return (convertion_func_t)(unsigned long)from_utf8_to_utf16le(infile,outfile);
-    case utf8_to_utf16be:
+        case utf8_to_utf16be:
             return (convertion_func_t)(unsigned long)from_utf8_to_utf16be(infile,outfile);
-    case utf16le_to_utf16be:
+        case utf16le_to_utf16be:
             return (convertion_func_t)(unsigned long)from_utf16le_to_utf16be(infile,outfile);
-    case utf16be_to_utf16le:
+        case utf16be_to_utf16le:
             return (convertion_func_t)(unsigned long)from_utf16be_to_utf16le(infile,outfile);
-    case utf16be_to_utf8:
+        case utf16be_to_utf8:
             return (convertion_func_t)(unsigned long)from_utf16be_to_utf8(infile,outfile);
-    case utf16le_to_utf8:
+        case utf16le_to_utf8:
             return (convertion_func_t)(unsigned long)from_utf16le_to_utf8(infile,outfile);
-    case transcribe_file:
+        case transcribe_file:
             return (convertion_func_t)(unsigned long)transcribe(infile,outfile);
     }
   return NULL;
@@ -34,7 +34,6 @@ get_encoding_function(int infile,int outfile){
 
 void
 check_bom(){
-  
     int fd;
     ssize_t bytes_read;
     format_t bom = 0;
@@ -58,7 +57,7 @@ check_bom(){
         return;
     }
     #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-      reverse_bytes(&bom, 2);
+        reverse_bytes(&bom, 2);
     #endif
     debug("BOM AFTER SWAP: %x", bom);
     if (LOWER_TWO_BYTES(bom) == UTF16LE) {

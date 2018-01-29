@@ -12,7 +12,7 @@ from_utf16be_to_utf16le(int infile, int outfile){
 
     bom = UTF16LE;
     #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-    reverse_bytes(&bom, 2);//3
+        reverse_bytes(&bom, 2);//3
     #endif
     write_to_bigendian(outfile, &bom, 2);
 
@@ -40,21 +40,19 @@ from_utf16be_to_utf8(int infile, int outfile){
     int ret = 0;
     utf8_glyph_t utf8_buf;
     size_t size_of_glyph;
-
+    
     bom = UTF8;
-
     write_to_bigendian(outfile, &bom, 3);
 
     while((bytes_read = read_to_bigendian(infile, &(buf.upper_bytes), 2)) > 0) {
         reverse_bytes(&(buf.upper_bytes), 2);
         if(!is_upper_surrogate_pair(buf)) {
-          ret = buf.upper_bytes;
-          utf8_buf = code_point_to_utf8_glyph(ret, &size_of_glyph);
-          write_to_bigendian(outfile, &utf8_buf, size_of_glyph);
-
-        } else {
-          read_to_bigendian(infile, &(buf.lower_bytes), 2);
-          reverse_bytes(&(buf.lower_bytes), 2);
+            ret = buf.upper_bytes;
+            utf8_buf = code_point_to_utf8_glyph(ret, &size_of_glyph);
+            write_to_bigendian(outfile, &utf8_buf, size_of_glyph);
+        }else {
+            read_to_bigendian(infile, &(buf.lower_bytes), 2);
+            reverse_bytes(&(buf.lower_bytes), 2);
             if(is_lower_surrogate_pair(buf)) {
                 ret = ((buf.upper_bytes - 0xD800) << 10  |
                        ((buf.lower_bytes - 0xDC00) & 0x3FF)) + 0x10000;
